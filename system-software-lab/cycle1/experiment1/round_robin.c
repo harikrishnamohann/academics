@@ -1,0 +1,54 @@
+#include <stdio.h>
+
+typedef enum {False, True} Bool;
+
+int main() {
+  printf("Enter number of processes: ");
+  int n;
+  scanf("%d", &n);
+
+  int bt[n], at[n], tat[n], ct[n], wt[n], p[n], rem_bt[n];
+  printf("Enter at, bt of each process\n");
+  for (int i = 0; i < n; i++) {
+    printf("at and bt of p%d = ", i+1);
+    scanf("%d%d", &at[i], &bt[i]);
+    rem_bt[i] = bt[i];
+    p[i] = i + 1;
+    wt[i] = tat[i] = ct[i] = 0;
+  }
+  printf("Enter time slice: ");
+  int time_slice, time = 0, completed = 0, total_tat = 0, total_wt = 0;
+  scanf("%d", &time_slice);
+
+  printf("\np[]\tat\tbt\tct\ttat\twt\n");
+  while (completed < n) {
+    Bool executed_in_cycle = False;
+    for (int i = 0; i < n; i++) {
+      if (at[i] <= time && rem_bt[i] > 0) {
+        if (rem_bt[i] <= time_slice) {
+          time += rem_bt[i];
+          rem_bt[i] = 0;
+        } else {
+          time += time_slice;
+          rem_bt[i] -= time_slice;
+        }
+
+        ct[i] = time;
+        tat[i] = ct[i] - at[i];
+        wt[i] = tat[i] - bt[i];
+        if (rem_bt[i] == 0) {
+          completed++;
+          total_tat += tat[i];
+          total_wt += wt[i];
+          printf("%3d\t%2d\t%2d\t%2d\t%3d\t%2d\n", p[i], at[i], bt[i], ct[i], tat[i], wt[i]);
+        }
+        executed_in_cycle = True;
+      }
+    }
+    if (!executed_in_cycle) time++;
+  }
+
+  printf("avg tat = %.2f\n", (float)total_tat / n);
+  printf("avg wt = %.2f\n", (float)total_wt / n);
+  return 0;
+}

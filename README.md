@@ -1,1 +1,1 @@
-# ktu-btech-system-software-lab
+# college-activities
