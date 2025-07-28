@@ -52,3 +52,21 @@ int main() {
   printf("avg wt = %.2f\n", (float)total_wt / n);
   return 0;
 }
+
+/*
+Enter number of processes: 4
+Enter at, bt of each process
+at and bt of p1 = 0 5
+at and bt of p2 = 1 7
+at and bt of p3 = 3 4
+at and bt of p4 = 5 6
+Enter time slice: 3
+
+p[]	at	bt	ct	tat	wt
+  1	 0	 5	14	 14	 9
+  3	 3	 4	18	 15	11
+  4	 5	 6	21	 16	10
+  2	 1	 7	22	 21	14
+avg tat = 16.50
+avg wt = 11.00
+*/

@@ -48,3 +48,21 @@ int main() {
   printf("avg tat is %.2f\n", (float)total_tat / n);
   return 0;
 }
+
+/*
+Enter number of processes: 4
+Enter bt of each process
+bt, priority of p1 = 3 5
+bt, priority of p2 = 2 3
+bt, priority of p3 = 2 2
+bt, priority of p4 = 5 1
+
+process priority bt wt tat
+      4        1  5  0   5
+      3        2  2  5   7
+      2        3  2  7   9
+      1        5  3  9  12
+avg wt is 5.25
+avg tat is 8.25
+
+*/

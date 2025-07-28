@@ -47,3 +47,20 @@ int main() {
   printf("avg tat is %.2f\n", (float)total_tat / n);
   return 0;
 }
+
+/*
+Enter number of processes: 4
+Enter bt of each process
+bt of p1 = 5
+bt of p2 = 3
+bt of p3 = 7
+bt of p4 = 1
+
+process bt wt tat
+      4  1  0   1
+      2  3  1   4
+      1  5  4   9
+      3  7  9  16
+avg wt is 3.50
+avg tat is 7.50
+*/
