@@ -15,19 +15,19 @@ int main() {
   }
 
   for (int i = 0; i < p_count; i++) {
-    int minimum_hole = 99999;
-    int min_hole_pos = -1;
+    int max_hole = -9999;
+    int max_hole_pos = -1;
     for (int j = 0; j < b_count; j++) {
       if (in_block[i] != -1) break;
       int hole = blocks[j] - proc[i];
-      if (hole >= 0 && hole < minimum_hole) {
-        minimum_hole = hole;
-        min_hole_pos = j;
+      if (hole && hole > max_hole) {
+        max_hole = hole;
+        max_hole_pos = j;
       }
     }
-    if (min_hole_pos != -1) {
-      blocks[min_hole_pos] -= proc[i];
-      in_block[i] = min_hole_pos;
+    if (max_hole_pos != -1) {
+      blocks[max_hole_pos] -= proc[i];
+      in_block[i] = max_hole_pos;
     }
   }
 
@@ -36,3 +36,23 @@ int main() {
     printf("%9d %11d %7d\n", i, proc[i], in_block[i]);
   return 0;
 }
+
+/*
+Enter number of blocks, process: 3 5
+Enter size of each block
+300
+600
+200
+Enter size of each process
+300
+100
+50
+200
+100
+ProcessNo processSize blockNo
+        0         300       1
+        1         100       0
+        2          50       1
+        3         200       1
+        4         100       0
+*/
