@@ -1,13 +1,3 @@
-/*
-# PASS - 1
-Inputs:
-	file1: sic program
-	file2: optab
-
-Outputs:
-	file1: symtab
-	file2: intermediate file
-*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -77,14 +67,14 @@ int main() {
 	int starting_addr = 0, locctr = 0;
 	advance_line(sic_file);
 	if (strcmp(opcode, "START") == 0) {
-		starting_addr = atoi(operand);
+		starting_addr = (int)strtol(operand, NULL, 16);
 		locctr = starting_addr;
 		write_pass1(pass1_file, locctr);
 	}
 	
 	advance_line(sic_file);
 	while (strcmp(opcode, "END") != 0) {
-		if (label[0] != '-') {
+		if (strcmp(label, "**") != 0) {
 			if (contains(symtab_file, label)) {
 				printf("duplicate label found: %s at %d \n", label, locctr);
 				goto end_pass1;
@@ -114,7 +104,9 @@ int main() {
 	}
 	
 	write_pass1(pass1_file, locctr);
-	printf("program length: %04X\n", locctr - starting_addr);
+
+	rewind(pass1_file); // writing program length as first 4 letters in the file.
+	fprintf(pass1_file, "%04X", locctr - starting_addr);
 	
 	end_pass1:
 		fclose(sic_file);
