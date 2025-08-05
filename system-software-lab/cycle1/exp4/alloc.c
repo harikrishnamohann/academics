@@ -77,3 +77,32 @@ int main() {
 
   return 0;
 }
+
+/*
+Enter number of blocks, process: 2 3
+Enter size of each block
+100
+200
+Enter size of each process
+60
+40
+250
+
+First fit
+processNo processSize blockNo
+        0          60       0
+        1          40       0
+        2         250 Not allocated
+
+Best fit
+processNo processSize blockNo
+        0          60       0
+        1          40       0
+        2         250 Not allocated
+
+Worst fit
+processNo processSize blockNo
+        0          60       1
+        1          40       1
+        2         250 Not allocated
+*/
