@@ -3,11 +3,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#define SIC_FILE "./input.sic"
-#define OPTAB_FILE "./optab"
-#define SYMTAB_FILE "./symtab"
-#define PASS1_INTR_FILE "./pass1_intermediate_file"
-
 #define INSTRUCTION_SIZE 3
 #define BUF_SIZE 20
 
@@ -16,26 +11,18 @@ char opcode[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE];
 // checks if table contains entity in key field in a key-value paired table
 // for optab and symtab
 bool contains(FILE* table, char* entity) {
-	rewind(table);
 	char key[BUF_SIZE], val[BUF_SIZE];
-	bool contains = false;
+	rewind(table);
 	while (fscanf(table, "%s\t%s\n", key, val) != EOF) {
-		if (strcmp(entity, key) == 0) {
-			contains = true;
-			break;
-		}
+		if (strcmp(entity, key) == 0) return true;
 	} 
-	return contains;
+	return false;
 }
 
-// saves current line of the sic program to corresponding fields
+// saves current line of the sic program to corresponding buffers
 // and advances file pointer
 void advance_line(FILE* program) {
-	int count = fscanf(program, "%s\t%s\t%s\n", label, opcode, operand);
-	if (count != 3) {
-		printf("error: malformated input found\n");
-		exit(1);
-	}
+	fscanf(program, "%s\t%s\t%s\n", label, opcode, operand);
 }
 
 void write_pass1(FILE* pass1_file, int address) {
@@ -49,18 +36,16 @@ void insert_symbol(FILE* symtab, char* label, int locctr) {
 
 int eval_byte_length(char* stream) {
 	int length = strlen(stream) - 3; // 3 for C'' or X'' characters
-	if (stream[0] == 'X') {
-		return length / 2;
-	}
+	if (stream[0] == 'X') return length / 2;
 	return length;
 }
 
 int main() {
-	FILE* sic_file = fopen(SIC_FILE, "r");
-	FILE* optab_file = fopen(OPTAB_FILE, "r");
-	FILE* symtab_file = fopen(SYMTAB_FILE, "w+");
-	FILE* pass1_file = fopen(PASS1_INTR_FILE, "w");
-	if (sic_file == NULL || optab_file == NULL || symtab_file == NULL || pass1_file == NULL) {
+	FILE* sic_file = fopen("./input.sic", "r");
+	FILE* optab_file = fopen("./optab", "r");
+	FILE* symtab_file = fopen("./symtab", "w+");
+	FILE* pass1_file = fopen("./pass1_intermediate_file", "w");
+	if (!sic_file || !optab_file || !symtab_file || !pass1_file) {
 		perror("error opening files");
 	}
 	
@@ -82,7 +67,6 @@ int main() {
 				insert_symbol(symtab_file, label, locctr);
 			}
 		}
-		
 		write_pass1(pass1_file, locctr);
 		if (contains(optab_file, opcode)) {
 			locctr += INSTRUCTION_SIZE;
@@ -104,7 +88,6 @@ int main() {
 	}
 	
 	write_pass1(pass1_file, locctr);
-
 	rewind(pass1_file); // writing program length as first 4 letters in the file.
 	fprintf(pass1_file, "%04X", locctr - starting_addr);
 	
