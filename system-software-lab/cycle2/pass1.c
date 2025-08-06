@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
 #define INSTRUCTION_SIZE 3
@@ -8,15 +7,18 @@
 
 char opcode[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE];
 
-// checks if table contains entity in key field in a key-value paired table
-// for optab and symtab
-bool contains(FILE* table, char* entity) {
+// checks if entity is present in given key-value paired table
+// and returns value field if entity is matched in key field.
+// for symtab and optab checking. returns -1 if not found
+int contains(FILE* table, char* entity) {
 	char key[BUF_SIZE], val[BUF_SIZE];
 	rewind(table);
 	while (fscanf(table, "%s\t%s\n", key, val) != EOF) {
-		if (strcmp(entity, key) == 0) return true;
+		if (strcmp(entity, key) == 0) {
+			return (int)strtol(val, NULL, 16);
+		}
 	} 
-	return false;
+	return -1;
 }
 
 // saves current line of the sic program to corresponding buffers
@@ -60,7 +62,7 @@ int main() {
 	advance_line(sic_file);
 	while (strcmp(opcode, "END") != 0) {
 		if (strcmp(label, "**") != 0) {
-			if (contains(symtab_file, label)) {
+			if (contains(symtab_file, label) != -1) {
 				printf("duplicate label found: %s at %d \n", label, locctr);
 				goto end_pass1;
 			} else {
@@ -68,7 +70,7 @@ int main() {
 			}
 		}
 		write_pass1(pass1_file, locctr);
-		if (contains(optab_file, opcode)) {
+		if (contains(optab_file, opcode) != -1) {
 			locctr += INSTRUCTION_SIZE;
 		} else {
  			if (strcmp(opcode, "WORD") == 0) {
@@ -80,7 +82,7 @@ int main() {
 			} else if (strcmp(opcode, "RESB") == 0) {
 				locctr += atoi(operand);
 			} else {
-				printf("invalid operand found %s at %d\n", opcode, locctr);
+				printf("invalid operand found %s at %04X\n", opcode, locctr);
 				goto end_pass1;
 			}
 		}
