@@ -72,19 +72,17 @@ int main() {
 		write_pass1(pass1_file, locctr);
 		if (contains(optab_file, opcode) != -1) {
 			locctr += INSTRUCTION_SIZE;
+		} else if (strcmp(opcode, "WORD") == 0) {
+			locctr += INSTRUCTION_SIZE;
+		} else if (strcmp(opcode, "BYTE") == 0) {
+			locctr += eval_byte_length(operand);
+		} else if (strcmp(opcode, "RESW") == 0) {
+			locctr += INSTRUCTION_SIZE * atoi(operand);
+		} else if (strcmp(opcode, "RESB") == 0) {
+			locctr += atoi(operand);
 		} else {
- 			if (strcmp(opcode, "WORD") == 0) {
-				locctr += INSTRUCTION_SIZE;
-			} else if (strcmp(opcode, "BYTE") == 0) {
-				locctr += eval_byte_length(operand);
-			} else if (strcmp(opcode, "RESW") == 0) {
-				locctr += 3 * atoi(operand);
-			} else if (strcmp(opcode, "RESB") == 0) {
-				locctr += atoi(operand);
-			} else {
-				printf("invalid operand found %s at %04X\n", opcode, locctr);
-				goto end_pass1;
-			}
+			printf("invalid operand found: %s at %04X\n", opcode, locctr);
+			goto end_pass1;
 		}
 		advance_line(sic_file);
 	}
