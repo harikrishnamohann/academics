@@ -33,11 +33,11 @@ int main() {
           rem_bt[i] -= time_slice;
         }
 
-        ct[i] = time;
-        tat[i] = ct[i] - at[i];
-        wt[i] = tat[i] - bt[i];
         if (rem_bt[i] == 0) {
           completed++;
+          ct[i] = time;
+          tat[i] = ct[i] - at[i];
+          wt[i] = tat[i] - bt[i];
           total_tat += tat[i];
           total_wt += wt[i];
           printf("%3d\t%2d\t%2d\t%2d\t%3d\t%2d\n", p[i], at[i], bt[i], ct[i], tat[i], wt[i]);
@@ -54,6 +54,7 @@ int main() {
 }
 
 /*
+OUTPUT:
 Enter number of processes: 4
 Enter at, bt of each process
 at and bt of p1 = 0 5
