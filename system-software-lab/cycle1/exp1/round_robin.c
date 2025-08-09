@@ -1,6 +1,6 @@
+// round robin
 #include <stdio.h>
-
-typedef enum {False, True} Bool;
+#include <stdbool.h>
 
 int main() {
   printf("Enter number of processes: ");
@@ -22,7 +22,7 @@ int main() {
 
   printf("\np[]\tat\tbt\tct\ttat\twt\n");
   while (completed < n) {
-    Bool executed_in_cycle = False;
+    bool executed_in_cycle = false;
     for (int i = 0; i < n; i++) {
       if (at[i] <= time && rem_bt[i] > 0) {
         if (rem_bt[i] <= time_slice) {
@@ -42,7 +42,7 @@ int main() {
           total_wt += wt[i];
           printf("%3d\t%2d\t%2d\t%2d\t%3d\t%2d\n", p[i], at[i], bt[i], ct[i], tat[i], wt[i]);
         }
-        executed_in_cycle = True;
+        executed_in_cycle = true;
       }
     }
     if (!executed_in_cycle) time++;

@@ -1,3 +1,4 @@
+// lru page replacement
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -62,3 +63,41 @@ int main() {
   printf("#page hits = %d\n", ref_len - page_faults);
   return 0;
 }
+
+/*
+OUTPUT:
+Enter number of frames: 4
+Enter length of reference string: 13
+Enter ref string
+ref[0] = 7
+ref[1] = 0
+ref[2] = 1
+ref[3] = 2
+ref[4] = 0
+ref[5] = 3
+ref[6] = 0
+ref[7] = 4
+ref[8] = 2
+ref[9] = 3
+ref[10] = 0
+ref[11] = 3
+ref[12] = 2
+
+req	status   	frames
+7	page fault	_, _, _, _, 
+0	page fault	7, _, _, _, 
+1	page fault	7, 0, _, _, 
+2	page fault	7, 0, 1, _, 
+0	hit     	7, 0, 1, 2, 
+3	page fault	7, 0, 1, 2, 
+0	hit     	3, 0, 1, 2, 
+4	page fault	3, 0, 1, 2, 
+2	hit     	3, 0, 4, 2, 
+3	hit     	3, 0, 4, 2, 
+0	hit     	3, 0, 4, 2, 
+3	hit     	3, 0, 4, 2, 
+2	hit     	3, 0, 4, 2, 
+
+#page faults = 6
+#page hits = 7
+*/

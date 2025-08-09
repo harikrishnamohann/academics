@@ -1,11 +1,10 @@
+// sjf
 #include <stdio.h>
 
 void swap(int* a, int* b) {
-  if (*a != *b) {
-    *a ^= *b;
-    *b ^= *a;
-    *a ^= *b;
-  }
+  int tmp = *a;
+  *a = *b;
+  *b = tmp;
 }
 
 int main() {

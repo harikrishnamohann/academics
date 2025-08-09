@@ -1,3 +1,4 @@
+// bankers algorithm
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -94,6 +95,41 @@ int main() {
     printf("P%d -> ", safe_seq[i]);
   }
   printf("END\n");
-
   return 0;
 }
+/*
+OUTPUT
+Enter [number of processes], [number of shared resources]: 2 2
+
+## Enter current allocation matrix:
+P0, R0 = 0
+P0, R1 = 1
+P1, R0 = 0
+P1, R1 = 1
+
+## Enter max need of each resources:
+P0, R0 = 1
+P0, R1 = 3
+P1, R0 = 0
+P1, R1 = 1
+
+## Enter current availability of each resource: 
+R0 = 3
+R1 = 3
+
+NEED:
+1	2	
+0	0	
+
+MAX:
+1	3	
+0	1	
+
+ALLOCATION:
+0	1	
+0	1	
+
+Estimating safe sequence...
+The system is in safe state.
+safe sequence is :P0 -> P1 -> END
+*/

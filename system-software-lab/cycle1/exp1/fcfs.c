@@ -1,3 +1,4 @@
+// fcfs
 #include <stdio.h>
 
 int main() {

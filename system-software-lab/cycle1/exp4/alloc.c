@@ -1,3 +1,4 @@
+// first-fit, best-fit and worst fit allocation
 #include <stdio.h>
 #include <string.h>
 
@@ -79,6 +80,7 @@ int main() {
 }
 
 /*
+OUTPUT:
 Enter number of blocks, process: 2 3
 Enter size of each block
 100

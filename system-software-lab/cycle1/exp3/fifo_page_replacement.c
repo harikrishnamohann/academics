@@ -1,3 +1,4 @@
+// fifo page replacement algorithm
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -46,3 +47,27 @@ int main() {
 
   return 0;
 }
+ /*
+OUTPUT:
+Enter number of frames: 3
+Enter length of reference string: 7
+Enter reference string
+1
+3
+0
+3
+5
+6
+3
+req	status     	frames
+  1	page-fault	1, _, _, 
+  3	page-fault	1, 3, _, 
+  0	page-fault	1, 3, 0, 
+  3	hit       	1, 3, 0, 
+  5	page-fault	5, 3, 0, 
+  6	page-fault	5, 6, 0, 
+  3	page-fault	5, 6, 3, 
+
+number of page hits = 1
+number of page faults = 6
+ */
