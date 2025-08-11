@@ -8,7 +8,6 @@ LOOP    ADD     TABLE,X
 **      RSUB    **
 COUNT   RESW    1
 TABLE   RESW    2000
-**      RESW    2000
 ZERO    WORD    0
 TOTAL   RESW    1
 **      END     FIRST
