@@ -37,9 +37,10 @@ void decode(string key) {
     }
 
     string secret = { key.str + (key.len / 2), key.len / 2 };
+    key.len = strlen(key.str) - 1;
     size_t bytes_read = fread(secret.str, sizeof(char), secret.len, vault);
     for (int i = 0; i < bytes_read; i++) {
-        putchar(secret.str[i] ^ key.str[i % bytes_read]);
+        putchar(secret.str[i] ^ key.str[i % key.len]);
     }
     putchar('\n');
     fclose(vault);
@@ -50,7 +51,7 @@ void encode(string secret, string key) {
     assert(fp != NULL);
 
     for (int i = 0; i < secret.len; i++) {
-        secret.str[i] ^= key.str[i % secret.len]; 
+        secret.str[i] ^= key.str[i % key.len]; 
     }
     fwrite(secret.str, sizeof(char), secret.len, fp);
     fclose(fp);
