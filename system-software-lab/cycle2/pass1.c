@@ -21,17 +21,15 @@ int contains(FILE* table, char* entity) {
 	return -1;
 }
 
-// saves current line of the sic program to corresponding buffers
-// and advances file pointer
-void advance_line(FILE* program) {
-	fscanf(program, "%s\t%s\t%s\n", label, opcode, operand);
+
+void read_next_line(FILE* sic_file) {
+	fscanf(sic_file, "%s\t%s\t%s\n", label, opcode, operand);
 }
 
 void write_pass1(FILE* pass1_file, int address) {
 	fprintf(pass1_file, "%04X\t%s\t%s\t%s\n", address, label, opcode, operand);
 }
 
-// insert symbol to symtab
 void insert_symbol(FILE* symtab, char* label, int locctr) {
 	fprintf(symtab, "%s\t%04X\n", label, locctr);
 }
@@ -43,23 +41,20 @@ int eval_byte_length(char* stream) {
 }
 
 int main() {
-	FILE* sic_file = fopen("./input.sic", "r");
-	FILE* optab_file = fopen("./optab", "r");
-	FILE* symtab_file = fopen("./symtab", "w+");
-	FILE* pass1_file = fopen("./pass1_intermediate_file", "w");
-	if (!sic_file || !optab_file || !symtab_file || !pass1_file) {
-		perror("error opening files");
-	}
+	FILE* sic_file = fopen("input.sic", "r");
+	FILE* optab_file = fopen("optab", "r");
+	FILE* symtab_file = fopen("symtab", "w+");
+	FILE* pass1_file = fopen("pass1_intermediate_file", "w");
 	
 	int starting_addr = 0, locctr = 0;
-	advance_line(sic_file);
+	read_next_line(sic_file);
 	if (strcmp(opcode, "START") == 0) {
 		starting_addr = (int)strtol(operand, NULL, 16);
 		locctr = starting_addr;
 		write_pass1(pass1_file, locctr);
-	}
+	} 
 	
-	advance_line(sic_file);
+	read_next_line(sic_file);
 	while (strcmp(opcode, "END") != 0) {
 		if (strcmp(label, "**") != 0) {
 			if (contains(symtab_file, label) != -1) {
@@ -84,7 +79,7 @@ int main() {
 			printf("invalid operand found: %s at %04X\n", opcode, locctr);
 			goto end_pass1;
 		}
-		advance_line(sic_file);
+		read_next_line(sic_file);
 	}
 	
 	write_pass1(pass1_file, locctr);
