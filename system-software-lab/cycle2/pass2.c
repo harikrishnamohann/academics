@@ -21,8 +21,28 @@ int contains(FILE* table, char* entity) {
 	return -1;
 }
 
+void read_pass1(FILE* fp) {
+	fscanf(fp, "%s\t%s\t%s\t%s\n", address, label, opcode, operand);
+}
+
 int main() {
 	FILE* optab_file = fopen("optab", "r");
-	FILE* intermediate_file = fopen("pass1_intermediate_file", "r");
+	FILE* pass1_file = fopen("pass1_intermediate_file", "r");
+	FILE* pass2_file = fopen("pass2_intermediate_file", "w");
+	FILE* obj_file = fopen("obj_code", "w");
+	
+	read_pass1(pass1_file);
+	if (strcmp(opcode, "START") == 0) {
+		fscanf(obj_file, "H %s %s %s\n", label, operand, address); 
+	}
+	
+	end:
+		fclose(optab_file);
+		fclose(pass1_file);
+		fclose(pass2_file);
+		fclose(obj_file);
+		return 0;
+}
+	
 	
 
