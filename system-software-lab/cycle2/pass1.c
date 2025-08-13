@@ -1,40 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define INSTRUCTION_SIZE 3
 #define BUF_SIZE 20
 
-char opcode[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE];
+char instruction[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE];
 
 // checks if entity is present in given key-value paired table
 // and returns value field if entity is matched in key field.
 // for symtab and optab checking. returns -1 if not found
-int contains(FILE* table, char* entity) {
+bool contains(FILE* table, char* entity) {
 	char key[BUF_SIZE], val[BUF_SIZE];
 	rewind(table);
 	while (fscanf(table, "%s\t%s\n", key, val) != EOF) {
 		if (strcmp(entity, key) == 0) {
-			return (int)strtol(val, NULL, 16);
+			return true;
 		}
 	} 
-	return -1;
+	return false;
 }
 
-
-void read_next_line(FILE* sic_file) {
-	fscanf(sic_file, "%s\t%s\t%s\n", label, opcode, operand);
-}
-
-void write_pass1(FILE* pass1_file, int address) {
-	fprintf(pass1_file, "%04X\t%s\t%s\t%s\n", address, label, opcode, operand);
-}
-
-void insert_symbol(FILE* symtab, char* label, int locctr) {
-	fprintf(symtab, "%s\t%04X\n", label, locctr);
-}
-
-int eval_byte_length(char* stream) {
+int eval_const_length(char* stream) {
 	int length = strlen(stream) - 3; // 3 for C'' or X'' characters
 	if (stream[0] == 'X') return length / 2;
 	return length;
@@ -47,49 +35,47 @@ int main() {
 	FILE* pass1_file = fopen("pass1_intermediate_file", "w");
 	
 	int starting_addr = 0, locctr = 0;
-	read_next_line(sic_file);
-	if (strcmp(opcode, "START") == 0) {
+	fscanf(sic_file, "%s\t%s\t%s\n", label, instruction, operand);
+	if (strcmp(instruction, "START") == 0) {
 		starting_addr = (int)strtol(operand, NULL, 16);
 		locctr = starting_addr;
-		write_pass1(pass1_file, locctr);
+		fprintf(pass1_file, "%04X\t%s\t%s\t%s\n", locctr, label, instruction, operand);
 	} 
-	
-	read_next_line(sic_file);
-	while (strcmp(opcode, "END") != 0) {
+	fscanf(sic_file, "%s\t%s\t%s\n", label, instruction, operand);
+	while (strcmp(instruction, "END") != 0) {
 		if (strcmp(label, "**") != 0) {
-			if (contains(symtab_file, label) != -1) {
+			if (contains(symtab_file, label)) {
 				printf("duplicate label found: %s at %d \n", label, locctr);
-				goto end_pass1;
+				exit(1);
 			} else {
-				insert_symbol(symtab_file, label, locctr);
+				fprintf(symtab_file, "%s\t%04X\n", label, locctr);
 			}
 		}
-		write_pass1(pass1_file, locctr);
-		if (contains(optab_file, opcode) != -1) {
+		fprintf(pass1_file, "%04X\t%s\t%s\t%s\n", locctr, label, instruction, operand);
+		if (contains(optab_file, instruction)) {
 			locctr += INSTRUCTION_SIZE;
-		} else if (strcmp(opcode, "WORD") == 0) {
+		} else if (strcmp(instruction, "WORD") == 0) {
 			locctr += INSTRUCTION_SIZE;
-		} else if (strcmp(opcode, "BYTE") == 0) {
-			locctr += eval_byte_length(operand);
-		} else if (strcmp(opcode, "RESW") == 0) {
+		} else if (strcmp(instruction, "BYTE") == 0) {
+			locctr += eval_const_length(operand);
+		} else if (strcmp(instruction, "RESW") == 0) {
 			locctr += INSTRUCTION_SIZE * atoi(operand);
-		} else if (strcmp(opcode, "RESB") == 0) {
+		} else if (strcmp(instruction, "RESB") == 0) {
 			locctr += atoi(operand);
 		} else {
-			printf("invalid operand found: %s at %04X\n", opcode, locctr);
-			goto end_pass1;
+			printf("invalid operand found: %s at %04X\n", instruction, locctr);
+			exit(1);
 		}
-		read_next_line(sic_file);
+		fscanf(sic_file, "%s\t%s\t%s\n", label, instruction, operand);
 	}
 	
-	write_pass1(pass1_file, locctr);
+	fprintf(pass1_file, "%04X\t%s\t%s\t%s\n", locctr, label, instruction, operand);
 	rewind(pass1_file); // writing program length as first 4 letters in the file.
 	fprintf(pass1_file, "%04X", locctr - starting_addr);
 	
-	end_pass1:
-		fclose(sic_file);
-		fclose(optab_file);
-		fclose(symtab_file);
-		fclose(pass1_file);
-		return 0;
+	fclose(sic_file);
+	fclose(optab_file);
+	fclose(symtab_file);
+	fclose(pass1_file);
+	return 0;
 }
