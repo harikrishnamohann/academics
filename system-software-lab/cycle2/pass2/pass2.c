@@ -4,7 +4,7 @@
 
 #define INSTRUCTION_LENGTH 3
 #define BUF_SIZE 30
-#define TEXT_RECORD_LIMIT 30
+#define TEXT_RECORD_LIMIT 0x1e
 char opcode[BUF_SIZE], address[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE];
 
 int lookup_table(FILE* table, char* search_key, char* dest) {

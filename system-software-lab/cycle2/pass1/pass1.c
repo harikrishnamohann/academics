@@ -50,7 +50,7 @@ int main() {
 		} else if (strcmp(instruction, "WORD") == 0) {
 			locctr += INSTRUCTION_LENGTH;
 		} else if (strcmp(instruction, "BYTE") == 0) {
-			int length = strlen(operand) - INSTRUCTION_LENGTH; // 3 for C'' or X'' characters
+			int length = strlen(operand) - 3; // 3 for C'' or X'' characters
 			if (operand[0] == 'X') length /= 2;
 			locctr += length;
 		} else if (strcmp(instruction, "RESW") == 0) {
