@@ -87,6 +87,12 @@ void encode(string secret, string key) {
     fclose(fp);
 }
 
+void read_line(string* buf, char* msg) {
+    printf("%s", msg);
+    fgets(buf->str, BUF_SIZE, stdin);
+    buf->len = strlen(buf->str) - 1;
+    buf->str[buf->len] = '\0';
+}
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         usage(argv[0]);
@@ -95,20 +101,13 @@ int main(int argc, char *argv[]) {
 
     string buf = str_init(sizeof(char) * BUF_SIZE * 2);
     string buf_half = { buf.str + BUF_SIZE, BUF_SIZE };
+
     if (strcmp(argv[1], "--encode") == 0) {
-      printf("what's your secret message?\n > ");
-      fgets(buf.str, buf.len / 2, stdin);
-
-      printf("Enter pass phrase\n > ");
-      fgets(buf_half.str, buf_half.len, stdin);
-
-      string secret = { buf.str, strlen(buf.str) - 1 };
-      string key = { buf_half.str, strlen(buf_half.str) - 1 };
-      encode(secret, key);
+      read_line(&buf, "what's your secret message?\n > ");
+      read_line(&buf_half, "Enter pass phrase\n > ");
+      encode(buf, buf_half);
     } else if (strcmp(argv[1], "--decode") == 0) {
-      printf("pass phrase please...\n > ");
-      fgets(buf.str, buf.len, stdin);
-      buf.len = strlen(buf.str) - 1;
+      read_line(&buf, "pass phrase please...\n > ");
       decode(buf);
       printf("%s\nAuto self destruct in... ", buf_half.str);
       fflush(stdout);
@@ -119,16 +118,11 @@ int main(int argc, char *argv[]) {
       }
       panic_and_erase();
     } else if (strcmp(argv[1], "--commit") == 0) {
-        printf("If this is your last moment, what would you say? : ");        
-        fgets(buf.str, buf.len, stdin);
-        buf.len = strlen(buf.str);
-        buf.str[buf.len - 1] = '\0';
+        read_line(&buf, "If this is your last moment, what would you say? : ");        
         snprintf(buf_half.str, BUF_SIZE, "git add . && git commit -m \"%s\"", buf.str);
         system(buf_half.str);
-        printf("What's the secret word? : ");
-        fgets(buf.str, buf.len, stdin);
-        buf.len = strlen(buf.str) - 1;
-        decode(buf); // buf_half contains the key
+        read_line(&buf, "What's the secret word? : ");
+        decode(buf);
         snprintf(buf.str, BUF_SIZE, "git push https://%s:%s@github.com/%s/%s.git", UNAME, buf_half.str, UNAME, REPO);
         system(buf.str);
     } else {
