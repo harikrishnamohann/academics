@@ -73,6 +73,7 @@ void decode(string key) {
     for (int i = 0; i < length; i++) {
         secret.str[i] = (fgetc(vault) ^ key.str[i % key.len]);
     }
+    secret.str[length] = '\0';
     
     fclose(vault);
 }
@@ -118,7 +119,7 @@ int main(int argc, char *argv[]) {
       }
       panic_and_erase();
     } else if (strcmp(argv[1], "--commit") == 0) {
-        read_line(&buf, "If this is your last moment, what would you say? : ");        
+        read_line(&buf, "If this is your last moment, what do you have say? : ");        
         snprintf(buf_half.str, BUF_SIZE, "git add . && git commit -m \"%s\"", buf.str);
         system(buf_half.str);
         read_line(&buf, "What's the secret word? : ");
@@ -129,6 +130,8 @@ int main(int argc, char *argv[]) {
         usage(argv[0]);
         return 1;
     }
+
+    for (int i = 0; i < BUF_SIZE * 2; i++) buf.str[i] = 0;
 
     str_free(&buf);
     return 0;
