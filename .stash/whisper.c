@@ -5,12 +5,11 @@
 #include <unistd.h>
 #include <assert.h>
 #include <pthread.h>
-#include <stdbool.h>
+#include <signal.h>
+#include "user.h"
 
 #define VAULT_FILE "./.secrets1"
 #define BUF_SIZE 256
-#define UNAME "harikrishnamohann"
-#define REPO "academics"
 
 typedef struct {
     char* str;
@@ -31,33 +30,45 @@ void str_free(string* str) {
 }
 
 void usage(const char *prog_name) {
-    printf("Usage: %s [--encode | --decode]\n", prog_name);
+    printf("Usage: %s [--encode | --decode | --commit]\n", prog_name);
 }
 
-bool is_hacking;
-void* freak_out(void* arg) {
+void* go_brrr(void* trigger) {
     srand(time(NULL) ^ (uintptr_t)pthread_self());
     uint8_t var = 0;
-    while (is_hacking) {
-        if (rand() % 10 < 7) {
-            printf("\033[92m%d\033[0m", var);
-        } else {
-            char* accent_colors[] = {"\033[91m", "\033[96m", "\033[97m", "\033[33m"};
-            int accent_count = 4;
-            printf("%s%d\033[0m", accent_colors[rand() % accent_count], var);
-        }
-        fflush(stdout);
-        var = !var;
+    while (*(uint8_t*)trigger) {
+      if (rand() % 10 < 7) {
+        printf("\033[92m%d\033[0m", var);
+      } else {
+        char *accent_colors[] = {"\033[91m", "\033[96m", "\033[97m",
+                                 "\033[33m"};
+        int accent_count = 4;
+        printf("%s%d\033[0m", accent_colors[rand() % accent_count], var);
+      }
+      fflush(stdout);
+      var = !var;
     }
     return NULL;
 }
 
-void panic_and_erase() {
-    is_hacking = true;
+void handle_termination(int x) {
+    printf("Life only moves forward. There is no return at this point. Sorry\n");
+}
+
+void drama() {
+    signal(SIGINT, handle_termination);
+    printf("\nAuto self destruct in T-");
+    fflush(stdout);
+    for (int second = 10; second > 0; second--) {
+      printf("%d ", second);
+      fflush(stdout);
+      sleep(1.0);
+    }
+    uint8_t confuse = 1;
     pthread_t splash_thread;
-    pthread_create(&splash_thread, NULL, freak_out, NULL);
+    pthread_create(&splash_thread, NULL, go_brrr, &confuse);
     sleep(1);
-    is_hacking = false;
+    confuse = 0;
     pthread_join(splash_thread, NULL);
     system("clear");
 }
@@ -94,6 +105,7 @@ void read_line(string* buf, char* msg) {
     buf->len = strlen(buf->str) - 1;
     buf->str[buf->len] = '\0';
 }
+
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         usage(argv[0]);
@@ -110,14 +122,8 @@ int main(int argc, char *argv[]) {
     } else if (strcmp(argv[1], "--decode") == 0) {
       read_line(&buf, "pass phrase please...\n > ");
       decode(buf);
-      printf("%s\nAuto self destruct in... ", buf_half.str);
-      fflush(stdout);
-      for (int second = 10; second > 0; second--) {
-          printf("%d ", second);
-          fflush(stdout);
-          sleep(1.0);
-      }
-      panic_and_erase();
+      printf("\nsecret: %s\n", buf_half.str);
+      drama();
     } else if (strcmp(argv[1], "--commit") == 0) {
         read_line(&buf, "If this is your last moment, what do you have say? : ");        
         snprintf(buf_half.str, BUF_SIZE, "git add . && git commit -m \"%s\"", buf.str);

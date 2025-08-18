@@ -4,7 +4,6 @@
 
 #define BUF_SIZE 20
 #define INSTRUCTION_LENGTH 3
-char instruction[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE];
 
 int contains(FILE* table, char* search_key) {
 	char key[BUF_SIZE], val[BUF_SIZE];
@@ -18,6 +17,8 @@ int contains(FILE* table, char* search_key) {
 }
 
 int main() {
+	char instruction[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE];
+
 	FILE* input_sic = fopen("input.sic", "r");
 	FILE* optab = fopen("optab", "r");
 	FILE* symtab = fopen("symtab", "w+");
