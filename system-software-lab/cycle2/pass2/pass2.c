@@ -3,9 +3,9 @@
 #include <string.h>
 
 #define INSTRUCTION_LENGTH 3
-#define BUF_SIZE 30
+#define BUF_SIZE 32
 #define TEXT_RECORD_LIMIT 0x1e
-char opcode[BUF_SIZE], address[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE];
+char opcode[BUF_SIZE], address[BUF_SIZE], operand[BUF_SIZE], label[BUF_SIZE], opcode_cpy[BUF_SIZE], operand_cpy[BUF_SIZE], label_cpy[BUF_SIZE];
 
 int lookup_table(FILE* table, char* search_key, char* dest) {
 	char key[BUF_SIZE], val[BUF_SIZE];
@@ -48,10 +48,13 @@ int parse_constant() {
 
 void read_line(FILE* fp) {
   fscanf(fp, "%s\t%s\t%s\t%s\n", address, label, opcode, operand);
+  strcpy(label_cpy, label);
+  strcpy(opcode_cpy, opcode);
+  strcpy(operand_cpy, operand);
 }
 
 void write_listing(FILE* fp) {
-  fprintf(fp, "%s\t%s\t%s\t%s\n", address, label, opcode, operand);
+  fprintf(fp, "%s\t%s\t%s\t%s\t%s\n", address, label_cpy, opcode_cpy, operand_cpy, operand);
 }
 
 void update_text_length(FILE* obj_file, int len_pos, int new_length) {
