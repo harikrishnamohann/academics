@@ -88,9 +88,21 @@ INSERT INTO Employee VALUES
 
 9.UPDATE Department SET DID = 13 WHERE DNAME = 'Sales';
 
++-----+-------+
+| DID | DNAME |
++-----+-------+
+|  13 | Sales |
++-----+-------+
 
 
-*10. ALTER TABLE Employee DROP FOREIGN KEY fk_job;
-```
+10. ALTER TABLE Employee DROP FOREIGN KEY fk_job;
++-----+-------+------+------+
+| EID | ENAME | DID  | JID  |
++-----+-------+------+------+
+|   1 | A     |   10 |  100 |
+|   3 | C     |   10 | NULL |
+|   4 | D     |   10 |  100 |
++-----+-------+------+------+
+
 
 
