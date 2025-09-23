@@ -54,7 +54,7 @@ void read_line(FILE* fp) {
 }
 
 void write_listing(FILE* fp) {
-  fprintf(fp, "%s\t%s\t%s\t%s\t%s\n", address, label_cpy, opcode_cpy, operand_cpy, operand);
+  fprintf(fp, "%s\t%s\t%s\t%s\t%s%s\n", address, label_cpy, opcode_cpy, operand_cpy, opcode, operand);
 }
 
 void update_text_length(FILE* obj_file, int len_pos, int new_length) {
