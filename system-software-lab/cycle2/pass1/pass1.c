@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define BUF_SIZE 20
-#define opcode_LENGTH 3
+#define INSTR_LENGTH 3
 
 int contains(FILE* table, char* search_key) {
 	char key[BUF_SIZE], val[BUF_SIZE];
@@ -47,15 +47,15 @@ int main() {
 		fprintf(intermediate, "%04X\t%s\t%s\t%s\n", locctr, label, opcode, operand);
 
 		if (contains(optab, opcode)) {
-			locctr += opcode_LENGTH;
+			locctr += INSTR_LENGTH;
 		} else if (strcmp(opcode, "WORD") == 0) {
-			locctr += opcode_LENGTH;
+			locctr += INSTR_LENGTH;
 		} else if (strcmp(opcode, "BYTE") == 0) {
 			int length = strlen(operand) - 3; // 3 for C'' or X'' characters
 			if (operand[0] == 'X') length /= 2;
 			locctr += length;
 		} else if (strcmp(opcode, "RESW") == 0) {
-			locctr += opcode_LENGTH * atoi(operand);
+			locctr += INSTR_LENGTH * atoi(operand);
 		} else if (strcmp(opcode, "RESB") == 0) {
 			locctr += atoi(operand);
 		} else {
