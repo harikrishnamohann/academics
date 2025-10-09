@@ -54,13 +54,6 @@ void read_line(FILE* fp) {
   strcpy(operand_cpy, operand);
 }
 
-<<<<<<< HEAD
-void write_listing(FILE* fp) {
-  fprintf(fp, "%s\t%s\t%s\t%s\t%s%s\n", address, label_cpy, opcode_cpy, operand_cpy, opcode, operand);
-}
-
-=======
->>>>>>> ccd9da1226251e08c4a7b443ccdf6e26dd862799
 void update_text_length(FILE* obj_file, int len_pos, int new_length) {
   fseek(obj_file, len_pos, SEEK_SET);
   fprintf(obj_file, "%02X", new_length);
