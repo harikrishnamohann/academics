@@ -5,17 +5,13 @@ int main() {
   FILE *fp = fopen("obj_code", "r");
   char buf[12];
   int start_addr = 0;
+
+  fscanf(fp, "%s %s", buf, buf);
+  printf("PROGRAME NAME: %s\n", buf);
+  fscanf(fp, "%x", &start_addr);
   fscanf(fp, "%s", buf);
-  if (strcmp(buf, "H") == 0) {
-    fscanf(fp, "%s", buf);
-    printf("PROGRAME NAME: %s\n", buf);
-    fscanf(fp, "%x", &start_addr);
-    fscanf(fp, "%s", buf);
-    printf("PROGRAM LENGTH: %s\n", buf);
-  } else {
-    printf("No header record found.\n");
-    return 1;
-  }
+  printf("PROGRAM LENGTH: %s\n", buf);
+
   fscanf(fp, "%s", buf);
   while(strcmp(buf, "E") != 0) {
     if (strcmp(buf, "T") == 0) {
