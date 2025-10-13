@@ -21,14 +21,13 @@ int main() {
   FILE* optab = fopen("optab", "r");
   FILE* symtab = fopen("symtab", "w+");
   FILE* intmt = fopen("intermediate", "w");
-  FILE* length = fopen("length", "w");
 
   char label[32], opcode[32], operand[32];
   int locctr = 0, start_addr = 0;
   fscanf(input, "%s %s %s", label, opcode, operand);
   if (strcmp(opcode, "START") == 0) {
     locctr = start_addr = strtol(operand, NULL, 16);
-    fprintf(intmt, "**\t%s\t%s\t%s\n", label, opcode, operand);
+    fprintf(intmt, "****\t%s\t%s\t%s\n", label, opcode, operand);
   }
 
   fscanf(input, "%s %s %s", label, opcode, operand);
@@ -63,9 +62,9 @@ int main() {
   }
 
   fprintf(intmt, "%04X\t%s\t%s\t%s\n", locctr, label, opcode, operand);
-  fprintf(length, "%04X", locctr - start_addr);
+  rewind(intmt);
+  fprintf(intmt, "%04X", locctr - start_addr);
 
-  fclose(length);
   fclose(intmt);
   fclose(symtab);
   fclose(optab);

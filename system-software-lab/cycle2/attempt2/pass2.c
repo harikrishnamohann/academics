@@ -2,12 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-char opcode[32], opcode_cpy[32], label[32], label_cpy[32], operand[32], operand_cpy[32], addr[32];
+char opcode[32], label[32], operand[32], operand_cpy[32], addr[32];
 
-void read_intmnt(FILE* fp) {
+void read_intermediate(FILE* fp) {
   fscanf(fp, "%s\t%s\t%s\t%s", addr, label, opcode, operand);
-  strcpy(label_cpy, label);
-  strcpy(opcode_cpy, opcode);
   strcpy(operand_cpy, operand);
 }
 
@@ -24,19 +22,17 @@ int search_tab(FILE* fp, char* entity) {
 
 int main() {
   FILE* intmt = fopen("intermediate", "r");
-  FILE* prgrm_len = fopen("length", "r");
   FILE* symtab = fopen("symtab", "r");
   FILE* optab = fopen("optab", "r");
   FILE* obj_code = fopen("obj_code", "w");
   FILE* listing = fopen("listing", "w");
 
-  read_intmnt(intmt);
+  read_intermediate(intmt);
   if (strcmp(opcode, "START") == 0) {
-    fprintf(listing, "%s\t%s\t%s\t%s\t**\n", addr, label_cpy, opcode_cpy, operand_cpy);
+    fprintf(listing, "**\t%s\t%s\t%s\t**\n", label, opcode, operand_cpy);
   }
-  fscanf(prgrm_len, "%s", addr);
   fprintf(obj_code, "H^%s^00%s^00%s\n", label, operand, addr);
-  read_intmnt(intmt);
+  read_intermediate(intmt);
   fprintf(obj_code, "T^00%s^**", addr);
   int len_pos = ftell(obj_code) - 2, count = 0;
 
@@ -74,7 +70,7 @@ int main() {
       sprintf(obj, "%06X", atoi(operand));      
     }
     if (strcmp(opcode, "RESW") != 0 && strcmp(opcode, "RESB") != 0) {
-      if (count > 0x1e - (strlen(obj) / 2)) {
+      if (count > 30 - (strlen(obj) / 2)) {
         fseek(obj_code, len_pos, SEEK_SET);
         fprintf(obj_code, "%02X", count);
         fseek(obj_code, 0, SEEK_END);
@@ -84,19 +80,18 @@ int main() {
       }
       count += strlen(obj) / 2;
       fprintf(obj_code, "^%s", obj);
-      fprintf(listing, "%s\t%s\t%s\t%s\t%s\n", addr, label_cpy, opcode_cpy, operand_cpy, obj);
+      fprintf(listing, "%s\t%s\t%s\t%s\t%s\n", addr, label, opcode, operand_cpy, obj);
     } else {
-      fprintf(listing, "%s\t%s\t%s\t%s\t**\n", addr, label_cpy, opcode_cpy, operand_cpy);
+      fprintf(listing, "%s\t%s\t%s\t%s\t**\n", addr, label, opcode, operand_cpy);
     }
-    read_intmnt(intmt);
+    read_intermediate(intmt);
   }
 
   fseek(obj_code, len_pos, SEEK_SET);
   fprintf(obj_code, "%02X", count);
-  fprintf(listing, "%s\t%s\t%s\t%s\t**\n", addr, label_cpy, opcode_cpy, operand_cpy);
+  fprintf(listing, "%s\t%s\t%s\t%s\t**\n", addr, label, opcode, operand_cpy);
   
   fclose(intmt);
-  fclose(prgrm_len);
   fclose(symtab);
   fclose(optab);
   fclose(obj_code);
