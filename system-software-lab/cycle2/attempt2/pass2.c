@@ -30,8 +30,6 @@ int main() {
   FILE* obj_code = fopen("obj_code", "w");
   FILE* listing = fopen("listing", "w");
 
-  char obj_queue[10][32];
-
   read_intmnt(intmt);
   if (strcmp(opcode, "START") == 0) {
     fprintf(listing, "%s\t%s\t%s\t%s\t**\n", addr, label_cpy, opcode_cpy, operand_cpy);
