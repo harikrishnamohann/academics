@@ -44,7 +44,6 @@ int main() {
         int indexed = 0, len = strlen(operand);
         if (operand[len - 1] == 'X' && operand[len - 2] == ',') {
           indexed = 0x8000;
-          operand[len - 1] = '\0';
           operand[len - 2] = '\0';
         }
         if ((sym_addr = search_tab(symtab, operand)) != -1) {
