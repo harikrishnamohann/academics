@@ -12,10 +12,8 @@ void read_intermediate(FILE* fp) {
 int search_tab(FILE* fp, char* entity) {
   rewind(fp);
   char key[32], val[32];
-  fscanf(fp, "%s %s", key, val);
-  while (!feof(fp)) {
+  while (fscanf(fp, "%s %s", key, val) != EOF) {
     if (strcmp(key, entity) == 0) return strtol(val, NULL, 16);
-    fscanf(fp, "%s %s", key, val);
   }
   return -1;
 }
@@ -74,7 +72,7 @@ int main() {
         fprintf(obj_code, "%02X", count);
         fseek(obj_code, 0, SEEK_END);
         fprintf(obj_code, "\nT^00%s^**", addr);
-        len_pos = ftell(obj_code);
+        len_pos = ftell(obj_code) - 2;
         count = 0;
       }
       count += strlen(obj) / 2;
@@ -86,6 +84,7 @@ int main() {
     read_intermediate(intmt);
   }
 
+  fprintf(obj_code, "\nE^00%s\n", operand);
   fseek(obj_code, len_pos, SEEK_SET);
   fprintf(obj_code, "%02X", count);
   fprintf(listing, "%s\t%s\t%s\t%s\t**\n", addr, label, opcode, operand_cpy);
