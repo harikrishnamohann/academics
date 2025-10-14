@@ -11,9 +11,9 @@ void read_intermediate(FILE* fp) {
 
 int search_tab(FILE* fp, char* entity) {
   rewind(fp);
-  char key[32], val[32];
-  while (fscanf(fp, "%s %s", key, val) != EOF) {
-    if (strcmp(key, entity) == 0) return strtol(val, NULL, 16);
+  char key[32]; int val;
+  while (fscanf(fp, "%s %X", key, &val) != EOF) {
+    if (strcmp(key, entity) == 0) return val;
   }
   return -1;
 }
