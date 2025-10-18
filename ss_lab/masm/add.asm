@@ -19,6 +19,8 @@ endm
 .code
 read_num proc
         push ax
+        push cx
+        push bx
 
         xor ax, ax        ; clear ax
         xor cx, cx
@@ -27,23 +29,30 @@ read_num proc
 begin_read:
         mov ah, 01h
         int 21h
-        xor ah, ah
+        xor ah, ah         ; clears ah
         cmp al, 0dh
-        je read_end        ; jump out of loop if carriage return is read.
-        mov cl, al         ; dl <-- al
-        sub cl, 30h        ; convert ASCII into number
-        mov ax, num
+        je read_end        ;jump out of loop if carriage return is read.
+
+        mov cl, al         ;dl <-- al
+        sub cl, 30h        ;convert ASCII into number
+        mov ax, num        ;num is loaded into ax
         mul bx             ;DX:AX = AX × BX (32-bit result)
-        add ax, cx         ; adds new digit to accumulated result
-        mov num, ax
-        jmp begin_read
+        add ax, cx         ;adds new digit to accumulated result
+        mov num, ax        ;result is stored back to location num
+
+        jmp begin_read     ;loop
 read_end:
+        pop bx
+        pop cx
         pop ax
         ret
 read_num endp 
 
 print_num proc
         push ax
+        push bx
+        push dx
+
         cmp ax, 0
         je base_case
 
@@ -60,6 +69,8 @@ print_num proc
         int 21h
 
 base_case:
+        pop dx
+        pop bx
         pop ax
         ret
 print_num endp
